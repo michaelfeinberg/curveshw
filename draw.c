@@ -23,7 +23,7 @@ void add_circle( struct matrix * points,
   x0 = r + cx;
   y0 = cy;
   incr = 1/step;
-  
+  count = 0;
   while(count < 1.001){
     x1 = cx + r*cos(2*M_PI*count);
     y1 = cy + r*sin(2*M_PI*count);
@@ -59,6 +59,28 @@ void add_curve( struct matrix *points,
 		double x2, double y2, 
 		double x3, double y3, 
 		double step, int type ) {
+  struct matrix * xcoefs = generate_curve_coefs(x0, x1,
+						x2, x3, type);
+  struct matrix * ycoefs = generate_curve_coefs(y0, y1,
+						y2, y3, type);
+  double count, incr, X0, Y0, X1, Y1;
+  X0 = x0;
+  Y0 = y0;
+  count = 0;
+  incr = 1/step;
+  while(count < 1.001){
+    x1 = ((xcoefs->m[0][0])*pow(count,3)+(xcoefs->m[1][0])*pow(count,2)+
+	  (xcoefs->m[2][0])*count + (xcoefs->m[3][0]));
+	  
+    y1 = ((ycoefs->m[0][0])*pow(count,3)+(ycoefs->m[1][0])*pow(count,2)+ 
+	  (ycoefs->m[2][0])*count + (ycoefs->m[3][0]));
+    add_edge(points,x0,y0,0,x1,y1,0);
+    x0 = x1;
+    y0 = y1;
+    count += incr;
+
+  }
+
 }
 
 
